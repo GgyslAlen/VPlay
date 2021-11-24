@@ -1,12 +1,14 @@
+import cv2
 import sys
 import pygame
-import cv2
 
 
 def play(filename):
     cap = cv2.VideoCapture(filename)
     success, img = cap.read()
-    wn = pygame.display.set_mode((64, 64), pygame.FULLSCREEN)
+
+    resolution = (img.shape[0], img.shape[1])
+    wn = pygame.display.set_mode(resolution, pygame.FULLSCREEN)
     clock = pygame.time.Clock()
 
     while success:
@@ -14,17 +16,16 @@ def play(filename):
         success, img = cap.read()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                success = False
+                success, img = cap.read()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     success = False
-        wn.blit(pygame.image.frombuffer(img.tobytes(), (64, 64), "BGR"), (0, 0))
+        wn.blit(pygame.image.frombuffer(img.tobytes(), resolution, "BGR"), (0, 0))
         pygame.display.update()
 
     pygame.quit()
 
 
 if __name__ == '__main__':
-    file_name = r"/home/pi/test_64_64.mp4"
-    window_name = "window"
+    file_name = sys.argv[1]
     play(file_name)
